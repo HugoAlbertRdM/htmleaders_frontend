@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import styles from "./AllProducts.module.css";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -19,17 +20,17 @@ const Products = () => {
   };
 
   return (
-    <div id="products-container" className="products-grid">
+    <div id="products-container" className={styles.productsGrid}>
       {products.map((product) => (
         <div
           key={product.id}
-          className="product-item"
+          className={styles.productItem}
           onClick={() => handleProductClick(product.id)}
         >
           <img
             src={product.thumbnail}
             alt={product.title}
-            className="product-image"
+            className={styles.productImage}
           />
           <h3>{product.title}</h3>
           <p>Price: ${product.price}</p>
