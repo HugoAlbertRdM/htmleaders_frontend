@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import Searcher from "@/components/Searcher";
+import "./globals.css";
 
 export const metadata = {
   title: "Create Next App",
@@ -10,13 +11,15 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
-      <Header></Header>
-      <main >
-        <Searcher></Searcher>
-        {children}
-      </main> {/* Contenido dinámico */}
-      <Footer></Footer>
+      <body className="custom-body">
+        <div className="main-container">
+          <Header></Header>
+          <main >
+            <Searcher></Searcher>
+            {children}
+          </main> {/* Contenido dinámico */}
+          <Footer></Footer>
+        </div>
       </body>
     </html>
   );

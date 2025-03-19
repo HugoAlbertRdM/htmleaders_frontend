@@ -16,26 +16,28 @@ const Products = () => {
   }, []);
 
   const handleProductClick = (id) => {
-    window.location.href = `api.html?id=${id}`; // Redirige a la página con el id del producto
+    window.location.href = `productDetail/${id}`; // Redirige a la página con el id del producto
   };
 
   return (
-    <div id="products-container" className={styles.productsGrid}>
-      {products.map((product) => (
-        <div
-          key={product.id}
-          className={styles.productItem}
-          onClick={() => handleProductClick(product.id)}
-        >
-          <img
-            src={product.thumbnail}
-            alt={product.title}
-            className={styles.productImage}
-          />
-          <h3>{product.title}</h3>
-          <p>Price: ${product.price}</p>
-        </div>
-      ))}
+    <div className={styles.productsContainer}>
+      <div id="products-container" className={styles.productsGrid}>
+        {products.map((product) => (
+          <div
+            key={product.id}
+            className={styles.productItem}
+            onClick={() => handleProductClick(product.id)}
+          >
+            <img
+              src={product.thumbnail}
+              alt={product.title}
+              className={styles.productImage}
+            />
+            <h3>{product.title}</h3>
+            <p>Price: ${product.price}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

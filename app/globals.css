@@ -2,28 +2,56 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&family=Luckiest+Guy&display=swap');
 
-html, body {
-  font-family: "Raleway", sans-serif;
-  height: 100%;
-  margin: 0;
+.custom-body {
+  background-color: #f5f5f5; /* Color de fondo */
+  font-family: Arial, sans-serif; /* Fuente general */
+  padding-top: 70px; /* Para evitar que el header fijo tape el contenido */
+  overflow-x: hidden;
 }
 
-body {
+.main-container {
   display: flex;
   flex-direction: column;
+  min-height: 90vh;  /* Esto asegura que el contenedor principal tenga al menos la altura completa de la ventana */
 }
 
-header {
-  padding: 20px;
+
+h1 {
+  font-size: 2.2rem;
+  color: #2f2b3a;
+  margin-bottom: 20px;
+  margin-top: 10px;
 }
 
-main {
-  flex: 1; /* Esto asegura que el main ocupe el espacio disponible */
-  min-height: 100px; /* Tamaño mínimo para el main */
-  padding: 20px;
-  overflow: auto; /* Esto es útil si el contenido del main es muy largo */
+h2 {
+  font-size: 1.5rem;
+  color: #444;
+  margin-top: 20px;
 }
 
-footer {
-  padding: 20px;
+p {
+  font-size: 1.1rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  margin-left: 20px;
+  margin-right: 20px;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+ul li {
+  font-size: 1.1rem;
+  color: #333;
+  background: #e0e0e0;
+  padding: 10px;
+  border-radius: 5px;
+  margin: 8px 0;
+}
+
+strong {
+  color: #2f2b3a;
 }
