@@ -1,0 +1,73 @@
+/* styles/Navbar.module.css */
+
+.header {
+    display: flex;
+    background-color: #2f2b3a;
+    color: white;
+    text-align: center;
+    padding: 15px;
+    height: 30px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+
+.leftnav, .rightnav {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.leftnav {
+  justify-content: flex-start; /* Alinea los elementos a la izquierda */
+}
+
+.rightnav {
+  justify-content: flex-end; /* Alinea los elementos a la derecha */
+}
+
+.centernav {
+  display: flex;
+  justify-content: center; /* Centra los elementos dentro de la sección central */
+  gap: 15px;
+  width: 100%; /* Esto asegura que la sección central ocupe todo el espacio disponible */
+}
+  
+.logo_home {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+  
+  .centernav a,
+  .rightnav a {
+    font-family: 'Arial';
+    text-decoration: none;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background 0.3s;
+    color: rgb(244, 244, 244);
+  }
+  
+  .centernav a.active {
+    background-color: rgb(255, 255, 255);
+    color: #2b2b2b;
+  }
+  
+  .rightnav a.register {
+    background-color: #2b2b2b;
+    color: rgb(244, 244, 244);
+  }
+  
+  .rightnav a.login {
+    background-color: rgb(244, 244, 244);
+    color: #2b2b2b;
+  }
+  
+  .rightnav a:hover, .leftnav a:hover, .centernav a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+  

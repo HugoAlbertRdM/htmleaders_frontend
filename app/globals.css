@@ -1,0 +1,29 @@
+/* styles/globals.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@700&family=Luckiest+Guy&display=swap');
+
+html, body {
+  font-family: "Raleway", sans-serif;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  padding: 20px;
+}
+
+main {
+  flex: 1; /* Esto asegura que el main ocupe el espacio disponible */
+  min-height: 100px; /* Tamaño mínimo para el main */
+  padding: 20px;
+  overflow: auto; /* Esto es útil si el contenido del main es muy largo */
+}
+
+footer {
+  padding: 20px;
+}
