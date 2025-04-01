@@ -53,21 +53,21 @@ export default function Login() {
      if (tokenData) {
        router.push("/user");
      } else {
-       alert("Usuario o contraseña incorrectos");
+       alert("Incorrect password or username");
      }
    };
 
     return (
       <main>
         <form className={styles.form} onSubmit={handleSubmit}>
-          <h1 className={styles.title}>Iniciar Sesión</h1>
+          <h1 className={styles.title}>Login</h1>
           <label htmlFor="user">Username:</label><br />
           <input type="text" id="user" name="user" /><br />
           
           <label htmlFor="password">Password:</label><br />
           <input type="password" id="password" name="password" minLength="8" /><br /><br />
   
-          <input className={styles.button} type="submit" value="Enviar" /><br />
+          <input className={styles.button} type="submit" value="Submit" /><br />
         </form>
       </main>
     );
