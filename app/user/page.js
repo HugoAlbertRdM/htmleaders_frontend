@@ -18,7 +18,7 @@ export default function UserData() {
 
       try {
         const response = await fetch(
-          "https://das-p2-backend.onrender.com/api/users/profile", // ⚠️ Asegúrate de que esta es la URL correcta para obtener el usuario
+          "https://das-p2-backend.onrender.com/api/users/profile",
           {
             method: "GET",
             headers: {
