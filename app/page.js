@@ -10,9 +10,9 @@ export default function Home() {
   useEffect(() => {
     async function obtenerProductos() {
       try {
-        const respuesta = await fetch("https://dummyjson.com/products");
+        const respuesta = await fetch("http://127.0.0.1:8000/api/auctions/");
         const datos = await respuesta.json();
-        setProductos(datos.products);
+        setProductos(datos.results);
       } catch (error) {
         console.error("Error al obtener productos:", error);
       }

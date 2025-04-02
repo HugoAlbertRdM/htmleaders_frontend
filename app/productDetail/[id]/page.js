@@ -8,12 +8,13 @@ const ProductDetail = ({ params }) => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [categoriesDict, setCategoriesDict] = useState([]);
 
   // Verificamos que `id` esté siendo pasado correctamente
   useEffect(() => {
     console.log('Product ID:', id); // Verifica si el id llega correctamente
     if (id) {
-      fetch(`https://dummyjson.com/products/${id}`)
+      fetch(`http://127.0.0.1:8000/api/auctions/${id}/`)
         .then((response) => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -34,6 +35,16 @@ const ProductDetail = ({ params }) => {
       setLoading(false);
     }
   }, [id]);
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/auctions/categories/")
+      .then(response => response.json())
+      .then(data => {
+        const categoriesDict = data.results;
+        setCategoriesDict(categoriesDict);
+      })
+      .catch(error => console.error("Error al obtener los datos de las categorias:", error));
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -56,7 +67,11 @@ const ProductDetail = ({ params }) => {
             <h2>{product.title}</h2>
             <p>{product.description}</p>
             <p><strong>Price: </strong>${product.price}</p>
-            <p><strong>Category: </strong>{product.category}</p>
+            <p><strong>Category: </strong>
+              {categoriesDict.length > 0 
+                ? categoriesDict.find(cat => Number(cat.id) === Number(product.category))?.name || "Unknown" 
+                : "Loading categories..."}
+            </p>
             <p><strong>Stock: </strong>{product.stock}</p>
           </div>
         </div>

@@ -6,35 +6,48 @@ import styles from "./AllProducts.module.css";
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [categoriesDict, setCategoriesDict] = useState([]);
+  const [strCategories, setStrCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [maxPrice, setMaxPrice] = useState(1000);
   const [priceLimit, setPriceLimit] = useState(1000);
 
   useEffect(() => {
-    fetch("https://dummyjson.com/products")
+    fetch("http://127.0.0.1:8000/api/auctions/")
       .then(response => response.json())
       .then(data => {
-        setProducts(data.products);
-        setFilteredProducts(data.products);
-        const uniqueCategories = ["all", ...new Set(data.products.map(p => p.category))];
-        setCategories(uniqueCategories);
+        setProducts(data.results);
+        setFilteredProducts(data.results);
         
-        const maxProductPrice = Math.max(...data.products.map(p => p.price));
+        const maxProductPrice = Math.max(...data.results.map(p => p.price));
         setPriceLimit(maxProductPrice);
         setMaxPrice(maxProductPrice);
       })
       .catch(error => console.error("Error al obtener los datos del producto:", error));
   }, []);
 
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/auctions/categories/")
+      .then(response => response.json())
+      .then(data => {
+        const categoriesDict = data.results;
+        setCategoriesDict(categoriesDict);
+
+        const strCategories = ["all", ...new Set(data.results.map(c => c.name))];
+        setStrCategories(strCategories);
+      })
+      .catch(error => console.error("Error al obtener los datos de las categorias:", error));
+  }, []);
+
   useEffect(() => {
     let filtered = products;
     
     if (selectedCategory !== "all") {
-      filtered = filtered.filter(p => p.category === selectedCategory);
+      filtered = filtered.filter(p => Number(p.category) === Number(categoriesDict.find(category => category.name === selectedCategory).id));
     }
     
-    filtered = filtered.filter(p => p.price <= maxPrice);
+    filtered = filtered.filter(p => p.price <= Number(maxPrice));
     
     setFilteredProducts(filtered);
   }, [selectedCategory, maxPrice, products]);
@@ -48,7 +61,7 @@ const Products = () => {
       <div className={styles.filters}>
         <span>Category</span>
         <select onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
-          {categories.map((category, index) => (
+          {strCategories.map((category, index) => (
             <option key={index} value={category}>{category}</option>
           ))}
         </select>
@@ -57,7 +70,7 @@ const Products = () => {
           min="0"
           max={priceLimit}
           value={maxPrice}
-          onChange={(e) => setMaxPrice(e.target.value)}
+          onChange={(e) => setMaxPrice(Number(e.target.value))}
         />
         <span>Max Price: ${maxPrice}</span>
       </div>
