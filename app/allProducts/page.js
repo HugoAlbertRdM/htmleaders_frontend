@@ -5,26 +5,13 @@ import styles from "./AllProducts.module.css";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
   const [categoriesDict, setCategoriesDict] = useState([]);
   const [strCategories, setStrCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [priceLimit, setPriceLimit] = useState(1000);
-
-  useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/auctions/")
-      .then(response => response.json())
-      .then(data => {
-        setProducts(data.results);
-        setFilteredProducts(data.results);
-        
-        const maxProductPrice = Math.max(...data.results.map(p => p.price));
-        setPriceLimit(maxProductPrice);
-        setMaxPrice(maxProductPrice);
-      })
-      .catch(error => console.error("Error al obtener los datos del producto:", error));
-  }, []);
+  const [searchText, setSearchText] = useState("");
 
 
   useEffect(() => {
@@ -33,24 +20,47 @@ const Products = () => {
       .then(data => {
         const categoriesDict = data.results;
         setCategoriesDict(categoriesDict);
-
-        const strCategories = ["all", ...new Set(data.results.map(c => c.name))];
-        setStrCategories(strCategories);
+        setStrCategories(["all", ...new Set(data.results.map(c => c.name))]);
       })
-      .catch(error => console.error("Error al obtener los datos de las categorias:", error));
+      .catch(error => console.error("Error al obtener los datos de las categorías:", error));
   }, []);
 
   useEffect(() => {
-    let filtered = products;
-    
+    fetch("http://127.0.0.1:8000/api/auctions/")
+      .then(response => response.json())
+      .then(data => {
+        setProducts(data.results);
+
+        if (data.results.length > 0) {
+          const maxProductPrice = Math.max(...data.results.map(p => p.price));
+          setPriceLimit(maxProductPrice);
+          setMaxPrice(maxProductPrice);
+        }
+      })
+      .catch(error => console.error("Error al obtener los datos de los productos:", error));
+  }, []);
+
+  useEffect(() => {
+    if (categoriesDict.length === 0) return;
+  
+    let url = `http://127.0.0.1:8000/api/auctions/?precioMin=${minPrice}&precioMax=${maxPrice}`;
+  
     if (selectedCategory !== "all") {
-      filtered = filtered.filter(p => Number(p.category) === Number(categoriesDict.find(category => category.name === selectedCategory).id));
+      const category = categoriesDict.find(category => category.name === selectedCategory);
+      if (category) {
+        url += `&category=${category.id}`;
+      }
     }
-    
-    filtered = filtered.filter(p => p.price <= Number(maxPrice));
-    
-    setFilteredProducts(filtered);
-  }, [selectedCategory, maxPrice, products]);
+  
+    if (searchText) {
+      url += `&texto=${searchText}`; // Añadir el texto de búsqueda a la URL
+    }
+  
+    fetch(url)
+      .then(response => response.json())
+      .then(data => setProducts(data.results))
+      .catch(error => console.error("Error al obtener los datos del producto:", error));
+  }, [selectedCategory, minPrice, maxPrice, categoriesDict, searchText]);  
 
   const handleProductClick = (id) => {
     window.location.href = `productDetail/${id}`;
@@ -58,24 +68,43 @@ const Products = () => {
 
   return (
     <div className={styles.productsContainer}>
-      <div className={styles.filters}>
+        <div className={styles.filters}>
+        <span>Search</span>
+        <input
+          type="text"
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          placeholder="Search by title or description"
+        />
+
         <span>Category</span>
         <select onChange={(e) => setSelectedCategory(e.target.value)} value={selectedCategory}>
           {strCategories.map((category, index) => (
             <option key={index} value={category}>{category}</option>
           ))}
         </select>
-        <input
-          type="range"
-          min="0"
-          max={priceLimit}
-          value={maxPrice}
-          onChange={(e) => setMaxPrice(Number(e.target.value))}
-        />
-        <span>Max Price: ${maxPrice}</span>
+        
+        <span>Price Range: ${minPrice} - ${maxPrice}</span>
+          <div className={styles.priceRange}>
+          <input
+            type="range"
+            min="0"
+            max={priceLimit}
+            value={minPrice}
+            onChange={(e) => setMinPrice(Number(e.target.value))}
+          />
+          <input
+            type="range"
+            min="0"
+            max={priceLimit}
+            value={maxPrice}
+            onChange={(e) => setMaxPrice(Number(e.target.value))}
+          />
+        </div>
       </div>
+
       <div id="products-container" className={styles.productsGrid}>
-        {filteredProducts.map((product) => (
+        {products.map((product) => (
           <div
             key={product.id}
             className={styles.productItem}

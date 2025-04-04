@@ -49,7 +49,12 @@
       width: 83%;
       flex-wrap: wrap;
   }
-  
+
+.priceRange
+{
+  display: flex;
+  flex-direction: column;
+}
 
 /* Estilo para el select de categorías */
 .filters select {
