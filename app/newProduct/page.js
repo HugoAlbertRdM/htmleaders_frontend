@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./NewProduct.module.css";
+import { useSearchParams } from "next/navigation";
+
 
 export default function NewProduct() {
   const [userData, setUserData] = useState(null);
@@ -19,6 +21,9 @@ export default function NewProduct() {
   const [newCategory, setNewCategory] = useState(""); 
   const [thumbnail, setThumbnail] = useState("")
   const [closingDate, setClosingDate] = useState("")
+  const [errorMessage, setErrorMessage] = useState(null);
+  const searchParams = useSearchParams();
+  const id = searchParams.get("id");
   const router = useRouter();
 
   const handleCreateCategory = async () => {
@@ -52,54 +57,83 @@ export default function NewProduct() {
     }
   };
   
-
   const handleProduct = async (event) => {
-    event.preventDefault(); // Evita la recarga del formulario
+    event.preventDefault(); 
   
     if (!title || !description || !price || !rating || !stock || !brand || !selectedCategory || !thumbnail || !closingDate) {
-      alert("All fields are required");
+      setErrorMessage("All fields are required");
       return;
     }
   
-    // Convertir category de nombre a ID
     const categoryObj = categoriesDict.find((cat) => cat.name === selectedCategory);
-    if (!categoryObj) {
-      alert("Not valid category");
-      return;
-    }
+    const categoryId = categoryObj ? categoryObj.id : selectedCategory; // Si ya es ID, úsalo directamente
+  
+    const productData = {
+      title,
+      description,
+      price: parseFloat(price),
+      rating: parseFloat(rating),
+      stock: parseInt(stock, 10),
+      brand,
+      category: categoryId, // Usamos el ID correcto
+      thumbnail,
+      closing_date: new Date(`${closingDate}T23:59:59`).toISOString(),
+    };
   
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/auctions/`, {
-        method: "POST",
+      const response = await fetch(`http://127.0.0.1:8000/api/auctions/${id ? `${id}/` : ""}`, {
+        method: id ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          title,
-          description,
-          price: parseFloat(price),
-          rating: parseFloat(rating),
-          stock: parseInt(stock, 10),
-          brand,
-          category: categoryObj.id, // Enviar el ID en lugar del nombre
-          thumbnail,
-          closing_date: new Date(`${closingDate}T23:59:59`).toISOString(), // Asignar hora a closingDate porque solo con el día no cale
-        }),
+        body: JSON.stringify(productData),
       });
   
-      const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message || "Error al subir el producto.");
+        const errorData = await response.json();
+        const errorMessage = typeof errorData === "string"
+          ? errorData
+          : Object.entries(errorData)
+              .map(([key, value]) => `${key}: ${value}`)
+              .join(", ");
+        setErrorMessage(errorMessage);
+        return;
       }
   
-      console.log("Producto creado:", data);
-      alert("Producto creado con éxito.");
-      router.push("/allProducts"); 
+      const data = await response.json();
+      alert(id ? "Producto editado con éxito" : "Producto creado con éxito");
+      router.push("/allProducts");
     } catch (error) {
-      console.error("Error al subir el producto:", error);
-      alert("Error al crear el producto.");
+      setErrorMessage(error.message || "Error desconocido.");
     }
   };
+  
+  
+  useEffect(() => {
+    if (!id) return; // Si no hay id, es creación, no hacemos fetch
+  
+    const fetchProduct = async () => {
+      try {
+        const response = await fetch(`http://127.0.0.1:8000/api/auctions/${id}/`);
+        if (!response.ok) throw new Error("No se pudo cargar el producto");
+        const product = await response.json();
+  
+        setTitle(product.title);
+        setDescription(product.description);
+        setPrice(product.price);
+        setRating(product.rating);
+        setStock(product.stock);
+        setBrand(product.brand);
+        setSelectedCategory(product.category);
+        setThumbnail(product.thumbnail);
+        setClosingDate(product.closing_date.split("T")[0]); // Para input date
+      } catch (error) {
+        console.error(error);
+      }
+    };
+  
+    fetchProduct();
+  }, [id]);
   
 
   useEffect(() => {
@@ -156,7 +190,7 @@ export default function NewProduct() {
   return (
     <main>
         <form className={styles.form}>
-            <h1 className={styles.title}>Create Product</h1>
+        <h1 className={styles.title}>{id ? "Edit Product" : "Create Product"}</h1>
             
             <label htmlFor="title">Title: </label>
             <input type="text" id="title" name="title" onChange={(e) => setTitle(e.target.value)} required />
@@ -171,7 +205,7 @@ export default function NewProduct() {
             <input type="url" id="image" name="image" onChange={(e) => setThumbnail(e.target.value)} required />
             
             <label htmlFor="startingPrice">Starting Price: </label>
-            <input type="number" id="startingPrice" name="startingPrice" min="0" step="0.01" onChange={(e) => setPrice(e.target.value)} required />
+            <input type="number" id="startingPrice" name="startingPrice" min="0" step="1" onChange={(e) => setPrice(e.target.value)} required />
             
             <label htmlFor="stock">Stock: </label>
             <input type="number" id="stock" name="stock" min="0" onChange={(e) => setStock(e.target.value)} required />
@@ -212,7 +246,11 @@ export default function NewProduct() {
             <label htmlFor="brand">Brand: </label>
             <input type="text" id="brand" name="brand" onChange={(e) => setBrand(e.target.value)} required />
             
-            <button type="submit" className={styles.button} onClick={handleProduct}>Create Product</button>
+            <button type="submit" className={styles.button} onClick={handleProduct}>
+              {id ? "Save Changes" : "Create Product"}
+            </button>
+
+            {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
         </form>
     </main>
   );}

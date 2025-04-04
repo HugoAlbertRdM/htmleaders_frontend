@@ -73,3 +73,10 @@
     border-radius: 6px;
     cursor: pointer;
   }  
+
+  .errorMessage {
+    font-size: 18px;
+    color: rgb(129, 0, 0);
+    margin-bottom: 8px;
+    margin-left: 0;
+  }

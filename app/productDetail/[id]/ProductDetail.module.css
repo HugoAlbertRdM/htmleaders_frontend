@@ -47,9 +47,21 @@
     margin-bottom: 8px;
     margin-left: 0;
   }
+
+  .errorMessage {
+    font-size: 18px;
+    color: rgb(129, 0, 0);
+    margin-bottom: 8px;
+    margin-left: 0;
+  }
   
   .productInfo strong {
     color: #333;
+  }
+  
+  .rightSection {
+    display: flex;
+    flex-direction: column;
   }
   
   .bidsSection {
@@ -108,6 +120,7 @@
   .bidInput {
     padding: 10px;
     margin-right: 10px;
+    margin-bottom: 10px;
     width: 120px;
   }
 

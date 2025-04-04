@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
 import styles from './ProductDetail.module.css';
+import Link from 'next/link';
 
 const ProductDetail = ({ params }) => {
   const { id } = React.use(params);  // Accedemos al `id` desde params
@@ -14,7 +15,9 @@ const ProductDetail = ({ params }) => {
   const [bidAmount, setBidAmount] = useState("");
   const [userData, setUserData] = useState(null);
   const [editBid, setEditBid] = useState(null); // Para manejar la puja que se está editando
+  const [errorMessage, setErrorMessage] = useState(null);
   const router = useRouter();
+  
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -110,10 +113,9 @@ const ProductDetail = ({ params }) => {
         .then(response => response.json())
         .then(data => {
           if (data && data.id) {
-            setBids(prevBids => [...prevBids, data]); // Actualiza la lista de pujas
-            setBidAmount(""); // Limpiar el input después de la puja
+            window.location.reload();
           } else {
-            console.error(`Error: No se ha recibido una puja válida. price: ${bidAmount}, bidder: ${userData.username}, auction: ${product}`);
+            setErrorMessage(data)
           }
         })
         .catch(error => console.error("Error al realizar la puja:", error));
@@ -137,16 +139,15 @@ const ProductDetail = ({ params }) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ price: bidAmount }), // Actualizar la cantidad de la puja
+        body: JSON.stringify({ price: bidAmount, auction: id, bidder: userData.username }),
       })
         .then(response => response.json())
         .then(data => {
           if (data && data.id) {
             console.log("Updated bid:", data); // Verificación en consola
-            // Actualizamos el estado de las pujas
-            setBids(prevBids => prevBids.map(bid => (bid.id === data.id ? data : bid))); // Reemplazamos la puja editada
-            setBidAmount(""); // Limpiar el input
-            setEditBid(null); // Desactivar el modo de edición
+            window.location.reload();
+          } else {
+            setErrorMessage(data)
           }
         })
         .catch(error => console.error("Error al actualizar la puja:", error));
@@ -198,6 +199,7 @@ const ProductDetail = ({ params }) => {
             <p><strong>Stock: </strong>{product.stock}</p>
           </div>
 
+          <div className={styles.rightSection}>
           <div className={styles.bidsSection}>
             <h3>Bids</h3>
             {bids.length > 0 ? (
@@ -205,8 +207,12 @@ const ProductDetail = ({ params }) => {
                 {bids.map((bid, index) => (
                   <li key={index} className={styles.bidItem}>
                     <strong>User:</strong> {bid.bidder} | <strong>Amount:</strong> ${bid.price} | <strong>Date:</strong> {new Date(bid.creation_date).toLocaleString()}
-                    <button onClick={() => handleEditBid(bid)}>Edit</button>
-                    <button onClick={() => handleDeleteBid(bid.id)}>Delete</button>
+                    {bid.bidder === userData.username && (
+                      <>
+                        <button onClick={() => handleEditBid(bid)}>Edit</button>
+                        <button onClick={() => handleDeleteBid(bid.id)}>Delete</button>
+                      </>
+                    )}
                   </li>
                 ))}
               </ul>
@@ -224,8 +230,15 @@ const ProductDetail = ({ params }) => {
             <button className={styles.bidButton} onClick={editBid ? handleUpdateBid : handleBid}>
               {editBid ? "Update Bid" : "Place Bid"}
             </button>
+            
+          {errorMessage && <p className={styles.errorMessage}>{errorMessage}</p>}
+
           </div>
 
+          <Link href={`/newProduct?id=${id}`}>
+                  <input className={styles.bidButton} type="button" value="Edit Product" />
+          </Link>
+          </div>
         </div>
       )}
     </div>

@@ -43,7 +43,7 @@ const Products = () => {
   useEffect(() => {
     if (categoriesDict.length === 0) return;
   
-    let url = `http://127.0.0.1:8000/api/auctions/?precioMin=${minPrice}&precioMax=${maxPrice}`;
+    let url = `http://127.0.0.1:8000/api/auctions/?min=${minPrice}&max=${maxPrice}`;
   
     if (selectedCategory !== "all") {
       const category = categoriesDict.find(category => category.name === selectedCategory);
@@ -52,8 +52,8 @@ const Products = () => {
       }
     }
   
-    if (searchText) {
-      url += `&texto=${searchText}`; // Añadir el texto de búsqueda a la URL
+    if (searchText && searchText.length >= 3) {
+      url += `&search=${searchText}`; 
     }
   
     fetch(url)
