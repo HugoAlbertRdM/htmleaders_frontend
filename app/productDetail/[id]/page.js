@@ -30,7 +30,7 @@ const ProductDetail = ({ params }) => {
 
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/users/profile/",
+          "https://htmleaders-backend.onrender.com/api/users/profile/",
           {
             method: "GET",
             headers: {
@@ -60,7 +60,7 @@ const ProductDetail = ({ params }) => {
   useEffect(() => {
     console.log('Product ID:', id); // Verifica si el id llega correctamente
     if (id) {
-      fetch(`http://127.0.0.1:8000/api/auctions/${id}/`)
+      fetch(`https://htmleaders-backend.onrender.com/api/auctions/${id}/`)
         .then((response) => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -83,7 +83,7 @@ const ProductDetail = ({ params }) => {
   }, [id]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/auctions/categories/")
+    fetch("https://htmleaders-backend.onrender.com/api/auctions/categories/")
       .then(response => response.json())
       .then(data => {
         const categoriesDict = data.results;
@@ -93,7 +93,7 @@ const ProductDetail = ({ params }) => {
   }, []);
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/api/auctions/${id}/bid/`)
+    fetch(`https://htmleaders-backend.onrender.com/api/auctions/${id}/bid/`)
       .then(response => response.json())
       .then(data => {
         const bids = data.results;
@@ -105,7 +105,7 @@ const ProductDetail = ({ params }) => {
   const handleBid = () => {
     const token = localStorage.getItem("accessToken");
     if (bidAmount && !isNaN(bidAmount)) {
-      fetch(`http://127.0.0.1:8000/api/auctions/${id}/bid/`, {
+      fetch(`https://htmleaders-backend.onrender.com/api/auctions/${id}/bid/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ const ProductDetail = ({ params }) => {
     const token = localStorage.getItem("accessToken");
     if (editBid && bidAmount && !isNaN(bidAmount)) {
       console.log("Updating bid:", editBid.id, bidAmount); // Verificación en consola
-      fetch(`http://127.0.0.1:8000/api/auctions/${id}/bid/${editBid.id}/`, {
+      fetch(`https://htmleaders-backend.onrender.com/api/auctions/${id}/bid/${editBid.id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -162,7 +162,7 @@ const ProductDetail = ({ params }) => {
   // Función para eliminar una puja
   const handleDeleteBid = (bidId) => {
     const token = localStorage.getItem("accessToken");
-    fetch(`http://127.0.0.1:8000/api/auctions/${id}/bid/${bidId}/`, {
+    fetch(`https://htmleaders-backend.onrender.com/api/auctions/${id}/bid/${bidId}/`, {
       method: 'DELETE',
       Authorization: `Bearer ${token}`,
     })
