@@ -1,4 +1,4 @@
-import NewProductForm from './NewProductForm';
+import NewProductForm from './NewProduct';
 
 export default function Page() {
   return <NewProductForm />;
