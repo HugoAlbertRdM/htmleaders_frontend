@@ -10,7 +10,16 @@ export default function Home() {
   useEffect(() => {
     async function obtenerProductos() {
       try {
-        const respuesta = await fetch("http://127.0.0.1:8000/api/auctions/");
+        const token = localStorage.getItem("accessToken");
+
+        const respuesta = await fetch("http://127.0.0.1:8000/api/auctions/", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!respuesta.ok) throw new Error("Error al obtener los productos");
+
         const datos = await respuesta.json();
         setProductos(datos.results);
       } catch (error) {

@@ -13,22 +13,41 @@ const Products = () => {
   const [priceLimit, setPriceLimit] = useState(1000);
   const [searchText, setSearchText] = useState("");
 
-
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/auctions/categories/")
-      .then(response => response.json())
-      .then(data => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/auctions/categories/", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) throw new Error("Error al obtener las categorías");
+
+        const data = await response.json();
         const categoriesDict = data.results;
         setCategoriesDict(categoriesDict);
-        setStrCategories(["all", ...new Set(data.results.map(c => c.name))]);
-      })
-      .catch(error => console.error("Error al obtener los datos de las categorías:", error));
+        setStrCategories(["all", ...new Set(categoriesDict.map(c => c.name))]);
+      } catch (error) {
+        console.error("Error al obtener los datos de las categorías:", error);
+      }
+    };
+
+    fetchCategories();
   }, []);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/auctions/")
-      .then(response => response.json())
-      .then(data => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/auctions/", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) throw new Error("Error al obtener los productos");
+
+        const data = await response.json();
         setProducts(data.results);
 
         if (data.results.length > 0) {
@@ -36,31 +55,49 @@ const Products = () => {
           setPriceLimit(maxProductPrice);
           setMaxPrice(maxProductPrice);
         }
-      })
-      .catch(error => console.error("Error al obtener los datos de los productos:", error));
+      } catch (error) {
+        console.error("Error al obtener los datos de los productos:", error);
+      }
+    };
+
+    fetchProducts();
   }, []);
 
   useEffect(() => {
     if (categoriesDict.length === 0) return;
-  
-    let url = `http://127.0.0.1:8000/api/auctions/?min=${minPrice}&max=${maxPrice}`;
-  
-    if (selectedCategory !== "all") {
-      const category = categoriesDict.find(category => category.name === selectedCategory);
-      if (category) {
-        url += `&category=${category.id}`;
+
+    const fetchFilteredProducts = async () => {
+      try {
+        let url = `http://127.0.0.1:8000/api/auctions/?min=${minPrice}&max=${maxPrice}`;
+
+        if (selectedCategory !== "all") {
+          const category = categoriesDict.find(category => category.name === selectedCategory);
+          if (category) {
+            url += `&category=${category.id}`;
+          }
+        }
+
+        if (searchText && searchText.length >= 3) {
+          url += `&search=${searchText}`;
+        }
+
+        const response = await fetch(url, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) throw new Error("Error al obtener los productos filtrados");
+
+        const data = await response.json();
+        setProducts(data.results);
+      } catch (error) {
+        console.error("Error al obtener los datos del producto:", error);
       }
-    }
-  
-    if (searchText && searchText.length >= 3) {
-      url += `&search=${searchText}`; 
-    }
-  
-    fetch(url)
-      .then(response => response.json())
-      .then(data => setProducts(data.results))
-      .catch(error => console.error("Error al obtener los datos del producto:", error));
-  }, [selectedCategory, minPrice, maxPrice, categoriesDict, searchText]);  
+    };
+
+    fetchFilteredProducts();
+  }, [selectedCategory, minPrice, maxPrice, categoriesDict, searchText]);
 
   const handleProductClick = (id) => {
     window.location.href = `productDetail/${id}`;
@@ -68,7 +105,7 @@ const Products = () => {
 
   return (
     <div className={styles.productsContainer}>
-        <div className={styles.filters}>
+      <div className={styles.filters}>
         <span>Search</span>
         <input
           type="text"
@@ -83,9 +120,9 @@ const Products = () => {
             <option key={index} value={category}>{category}</option>
           ))}
         </select>
-        
+
         <span>Price Range: ${minPrice} - ${maxPrice}</span>
-          <div className={styles.priceRange}>
+        <div className={styles.priceRange}>
           <input
             type="range"
             min="0"

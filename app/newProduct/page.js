@@ -26,47 +26,64 @@ export default function NewProduct() {
   const id = searchParams.get("id");
   const router = useRouter();
 
-  const handleCreateCategory = async () => {
-    if (!newCategory.trim()) {
-      alert("Category name cannot be null");
-      return;
-    }
+
+  const handleCategoryCreation = async (event) => {
+    // Prevenir que el formulario se envíe de forma predeterminada
+    event.preventDefault();
+    
+    // Obtener el nombre de la categoría desde el estado o del input correspondiente
+    const newCategoryName = newCategory; // Asumiendo que categoryName es el estado de la categoría a crear
   
     try {
+      const token = localStorage.getItem("accessToken");
+  
       const response = await fetch("http://127.0.0.1:8000/api/auctions/categories/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ name: newCategory }),
+        body: JSON.stringify({ name: newCategoryName }), // solo enviamos el string con el nombre
       });
   
       if (!response.ok) {
-        throw new Error("Error creating category");
+        const errorData = await response.json();
+        setErrorMessage("Error al crear la categoría: " + errorData.detail);
+        return;
       }
   
-      const createdCategory = await response.json();
+      const data = await response.json();
+      // Actualizar las categorías en el estado después de crear una nueva categoría
+      setCategoriesDict((prevCategories) => [...prevCategories, data]);
+      setStrCategories((prevCategories) => [
+        ...prevCategories,
+        data.name,
+      ]);
+      // Seleccionar la nueva categoría automáticamente después de crearla
+      setSelectedCategory(data.name);
   
-      // Agregar nueva categoría a la lista y seleccionarla automáticamente
-      setStrCategories([...strCategories, createdCategory.name]);
-      setSelectedCategory(createdCategory.name);
-      setCreatingCategory(false);
-      setNewCategory(""); // Limpiar input
     } catch (error) {
-      console.error("Error:", error);
+      setErrorMessage("Error al crear la categoría: " + error.message);
     }
   };
   
+  
   const handleProduct = async (event) => {
-    event.preventDefault(); 
+    event.preventDefault();
   
     if (!title || !description || !price || !rating || !stock || !brand || !selectedCategory || !thumbnail || !closingDate) {
       setErrorMessage("All fields are required");
       return;
     }
   
-    const categoryObj = categoriesDict.find((cat) => cat.name === selectedCategory);
-    const categoryId = categoryObj ? categoryObj.id : selectedCategory; // Si ya es ID, úsalo directamente
+    // Asegurarse de que la categoría seleccionada tenga un valor válido
+    let categoryId = null;
+    if (selectedCategory !== "all") {
+      const categoryObj = categoriesDict.find((cat) => cat.name === selectedCategory);
+      categoryId = categoryObj ? categoryObj.id : null;
+    } else {
+      categoryId = 1;  // O cualquier valor predeterminado de categoría
+    }
   
     const productData = {
       title,
@@ -75,16 +92,20 @@ export default function NewProduct() {
       rating: parseFloat(rating),
       stock: parseInt(stock, 10),
       brand,
-      category: categoryId, // Usamos el ID correcto
+      category: categoryId,  // El ID de la categoría seleccionada
       thumbnail,
       closing_date: new Date(`${closingDate}T23:59:59`).toISOString(),
+      auctioneer: userData.id, // ID del usuario
     };
   
     try {
+      const token = localStorage.getItem("accessToken");
+  
       const response = await fetch(`http://127.0.0.1:8000/api/auctions/${id ? `${id}/` : ""}`, {
         method: id ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(productData),
       });
@@ -107,17 +128,25 @@ export default function NewProduct() {
       setErrorMessage(error.message || "Error desconocido.");
     }
   };
-  
+    
   
   useEffect(() => {
     if (!id) return; // Si no hay id, es creación, no hacemos fetch
   
     const fetchProduct = async () => {
       try {
-        const response = await fetch(`http://127.0.0.1:8000/api/auctions/${id}/`);
+        const token = localStorage.getItem("accessToken");
+    
+        const response = await fetch(`http://127.0.0.1:8000/api/auctions/${id}/`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+    
         if (!response.ok) throw new Error("No se pudo cargar el producto");
         const product = await response.json();
-  
+    
         setTitle(product.title);
         setDescription(product.description);
         setPrice(product.price);
@@ -130,22 +159,35 @@ export default function NewProduct() {
       } catch (error) {
         console.error(error);
       }
-    };
+    };    
   
     fetchProduct();
   }, [id]);
   
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/auctions/categories/")
-      .then(response => response.json())
-      .then(data => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:8000/api/auctions/categories/", {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+  
+        if (!response.ok) throw new Error("Error al obtener las categorías");
+  
+        const data = await response.json();
         const categoriesDict = data.results;
         setCategoriesDict(categoriesDict);
         setStrCategories([...new Set(data.results.map(c => c.name))]);
-      })
-      .catch(error => console.error("Error al obtener los datos de las categorías:", error));
+      } catch (error) {
+        console.error("Error al obtener los datos de las categorías:", error);
+      }
+    };
+  
+    fetchCategories();
   }, []);
+  
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -157,7 +199,7 @@ export default function NewProduct() {
 
       try {
         const response = await fetch(
-          "https://das-p2-backend.onrender.com/api/users/profile",
+          "http://127.0.0.1:8000/api/users/profile/",
           {
             method: "GET",
             headers: {
@@ -216,32 +258,42 @@ export default function NewProduct() {
             <label htmlFor="category">Category</label>
             <select
             onChange={(e) => {
-              if (e.target.value === "new") {
+              const value = e.target.value;
+              console.log('Selected value:', value); // Para verificar el valor seleccionado
+              if (value === "new") {
                 setCreatingCategory(true);
+                setSelectedCategory(""); // Limpiamos cualquier categoría seleccionada
               } else {
                 setCreatingCategory(false);
-                setSelectedCategory(e.target.value);
+                setSelectedCategory(value); // Establecemos la categoría seleccionada
               }
             }}
-            value={creatingCategory ? "new" : selectedCategory}
-            >
-              {strCategories.map((category, index) => (
-                <option key={index} value={category}>{category}</option>
-              ))}
-              <option value="new">+ Create new category</option>
-            </select>
+            value={creatingCategory ? "new" : selectedCategory} // Asegúrate de que este valor se actualice correctamente
+          >
+            {strCategories.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
+            <option value="new">+ Create new category</option>
+          </select>
 
-            {creatingCategory && (
-              <div>
-                <input
-                  type="text"
-                  value={newCategory}
-                  onChange={(e) => setNewCategory(e.target.value)}
-                  placeholder="New category"
-                />
-                <button onClick={handleCreateCategory}>Crear</button>
-              </div>
-            )}
+          {creatingCategory && (
+            <div>
+              <input
+                type="text"
+                value={newCategory}
+                onChange={(e) => {
+                  console.log('New category:', e.target.value); // Verifica el valor del input
+                  setNewCategory(e.target.value);
+                }}
+                placeholder="New category"
+              />
+              <button type="button" onClick={handleCategoryCreation}>Create category</button>
+            </div>
+          )}
+
+
             
             <label htmlFor="brand">Brand: </label>
             <input type="text" id="brand" name="brand" onChange={(e) => setBrand(e.target.value)} required />

@@ -19,6 +19,7 @@ const ProductDetail = ({ params }) => {
   const router = useRouter();
   
 
+ 
   useEffect(() => {
     const fetchUserData = async () => {
       const token = localStorage.getItem("accessToken");
@@ -29,7 +30,7 @@ const ProductDetail = ({ params }) => {
 
       try {
         const response = await fetch(
-          "https://das-p2-backend.onrender.com/api/users/profile",
+          "http://127.0.0.1:8000/api/users/profile/",
           {
             method: "GET",
             headers: {
@@ -102,20 +103,22 @@ const ProductDetail = ({ params }) => {
   }, []);
 
   const handleBid = () => {
+    const token = localStorage.getItem("accessToken");
     if (bidAmount && !isNaN(bidAmount)) {
       fetch(`http://127.0.0.1:8000/api/auctions/${id}/bid/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ price: bidAmount, auction: id, bidder: userData.username }), // Enviar la cantidad de la puja
+        body: JSON.stringify({ price: bidAmount, auction: id, bidder: userData.username , bidder_id: userData.id}), // Enviar la cantidad de la puja
       })
         .then(response => response.json())
         .then(data => {
           if (data && data.id) {
             window.location.reload();
           } else {
-            setErrorMessage(data)
+            setErrorMessage(Object.values(data).flat().join(" "));
           }
         })
         .catch(error => console.error("Error al realizar la puja:", error));
@@ -132,14 +135,16 @@ const ProductDetail = ({ params }) => {
 
   // Función para actualizar la puja
   const handleUpdateBid = () => {
+    const token = localStorage.getItem("accessToken");
     if (editBid && bidAmount && !isNaN(bidAmount)) {
       console.log("Updating bid:", editBid.id, bidAmount); // Verificación en consola
       fetch(`http://127.0.0.1:8000/api/auctions/${id}/bid/${editBid.id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ price: bidAmount, auction: id, bidder: userData.username }),
+        body: JSON.stringify({ price: bidAmount, auction: id, bidder: userData.username , bidder_id: userData.id}),
       })
         .then(response => response.json())
         .then(data => {
@@ -147,7 +152,7 @@ const ProductDetail = ({ params }) => {
             console.log("Updated bid:", data); // Verificación en consola
             window.location.reload();
           } else {
-            setErrorMessage(data)
+            setErrorMessage(Object.values(data).flat().join(" "));
           }
         })
         .catch(error => console.error("Error al actualizar la puja:", error));
@@ -156,8 +161,10 @@ const ProductDetail = ({ params }) => {
 
   // Función para eliminar una puja
   const handleDeleteBid = (bidId) => {
+    const token = localStorage.getItem("accessToken");
     fetch(`http://127.0.0.1:8000/api/auctions/${id}/bid/${bidId}/`, {
       method: 'DELETE',
+      Authorization: `Bearer ${token}`,
     })
       .then(() => {
         setBids(prevBids => prevBids.filter(bid => bid.id !== bidId)); // Elimina la puja de la lista
@@ -197,6 +204,7 @@ const ProductDetail = ({ params }) => {
                 : "Loading categories..."}
             </p>
             <p><strong>Stock: </strong>{product.stock}</p>
+            <p><strong>Auctioneer: </strong>{userData.username}</p>
           </div>
 
           <div className={styles.rightSection}>
@@ -207,7 +215,7 @@ const ProductDetail = ({ params }) => {
                 {bids.map((bid, index) => (
                   <li key={index} className={styles.bidItem}>
                     <strong>User:</strong> {bid.bidder} | <strong>Amount:</strong> ${bid.price} | <strong>Date:</strong> {new Date(bid.creation_date).toLocaleString()}
-                    {bid.bidder === userData.username && (
+                    {bid.bidder_id === userData.id && (
                       <>
                         <button onClick={() => handleEditBid(bid)}>Edit</button>
                         <button onClick={() => handleDeleteBid(bid.id)}>Delete</button>
