@@ -2,5 +2,8 @@
 import NewProductForm from "./newProduct";
 
 export default function NewProductPage() {
-  return <NewProductForm />;
+  return (
+  <Suspense fallback={<div>Loading...</div>}>
+      <NewProductForm />
+  </Suspense>);
 }
