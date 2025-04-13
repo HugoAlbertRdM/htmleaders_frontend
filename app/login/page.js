@@ -7,7 +7,7 @@
  const login = async (username, password) => {
   try {
     // 1. Login: obtener tokens
-    const tokenRes = await fetch("http://127.0.0.1:8000/api/token/", {
+    const tokenRes = await fetch("https://htmleaders-backend.onrender.com/api/token/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -24,7 +24,7 @@
     console.log('Access Token:', access); // Para verificar si el token es correcto
 
     // 2. Obtener perfil de usuario con el token
-    const profileRes = await fetch("http://127.0.0.1:8000/api/users/profile/", {
+    const profileRes = await fetch("https://htmleaders-backend.onrender.com/api/users/profile/", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

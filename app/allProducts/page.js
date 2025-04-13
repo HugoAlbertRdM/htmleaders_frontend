@@ -16,7 +16,7 @@ const Products = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/auctions/categories/", {
+        const response = await fetch("https://htmleaders-backend.onrender.com/api/auctions/categories/", {
           headers: {
             "Content-Type": "application/json",
           },
@@ -39,7 +39,7 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/auctions/", {
+        const response = await fetch("https://htmleaders-backend.onrender.com/api/auctions/", {
           headers: {
             "Content-Type": "application/json",
           },
@@ -68,7 +68,7 @@ const Products = () => {
 
     const fetchFilteredProducts = async () => {
       try {
-        let url = `http://127.0.0.1:8000/api/auctions/?min=${minPrice}&max=${maxPrice}`;
+        let url = `https://htmleaders-backend.onrender.com/api/auctions/?min=${minPrice}&max=${maxPrice}`;
 
         if (selectedCategory !== "all") {
           const category = categoriesDict.find(category => category.name === selectedCategory);
