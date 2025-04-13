@@ -12,7 +12,7 @@
    try {
  
      console.log("Datos enviados:", JSON.stringify(formData));
-     const response = await fetch("https://das-p2-backend.onrender.com/api/users/register/", {
+     const response = await fetch("http://127.0.0.1:8000/api/users/register/", {
        method: "POST",
        headers: { "Content-Type": "application/json" },
        body: JSON.stringify(formData),
@@ -30,7 +30,9 @@
      const userData = await response.json();
  
  
-     localStorage.setItem("user", JSON.stringify({ ...userData, password: formData.password }));
+     localStorage.setItem("accessToken", userData.access);
+     localStorage.setItem("refreshToken", userData.refresh);
+     localStorage.setItem("user", JSON.stringify(userData.user));
  
      return userData;
    } catch (error) {

@@ -43,6 +43,7 @@
     outline: none;
   }
   
+  /* Botones estilizados */
   .button {
     align-items: center;
     width: 100%;
@@ -57,6 +58,7 @@
     transition: all 0.3s ease-in-out;
   }
   
+  /* Efecto hover en botones */
   .button:hover {
     background-color: #ffffff;
     color: rgb(60, 56, 72);
@@ -71,3 +73,10 @@
     border-radius: 6px;
     cursor: pointer;
   }  
+
+  .errorMessage {
+    font-size: 18px;
+    color: rgb(129, 0, 0);
+    margin-bottom: 8px;
+    margin-left: 0;
+  }

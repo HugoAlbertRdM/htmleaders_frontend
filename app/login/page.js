@@ -4,39 +4,54 @@
  import { useRouter } from "next/navigation";
 
 
-const login = async (username, password) => {
+ const login = async (username, password) => {
   try {
-    const response = await fetch(
-      "https://das-p2-backend.onrender.com/api/users/login/",
-      {
-        method: "POST",
-        body: JSON.stringify({
-          username,
-          password,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-          //Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-        },
-      }
-    );
+    // 1. Login: obtener tokens
+    const tokenRes = await fetch("http://127.0.0.1:8000/api/token/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+    });
 
-    if (!response.ok) {
-      return null;
+    if (!tokenRes.ok) {
+      const errorData = await tokenRes.json(); // Primer read
+      throw new Error(errorData?.detail || "Login failed");
     }
 
-    const tokenData = await response.json();
-    
+    const { access, refresh } = await tokenRes.json(); // Segundo read, ya no puedes hacer otro .json() aquí
+    console.log('Access Token:', access); // Para verificar si el token es correcto
 
-    localStorage.setItem("accessToken", tokenData.access);
+    // 2. Obtener perfil de usuario con el token
+    const profileRes = await fetch("http://127.0.0.1:8000/api/users/profile/", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${access}`,
+      },
+    });
+    console.log('Profile Response:', profileRes); // Verifica el status y headers
 
+    if (!profileRes.ok) {
+      const errorData = await profileRes.json(); // Lee la respuesta solo una vez
+      throw new Error(errorData?.detail || "Could not fetch user profile");
+    }
 
-    return tokenData;
+    const userData = await profileRes.json(); // Ahora puedes usar los datos
+
+    // 3. Guardar en localStorage
+    localStorage.setItem("accessToken", access);
+    localStorage.setItem("refreshToken", refresh);
+    localStorage.setItem("user", JSON.stringify(userData));
+
+    return true;
   } catch (error) {
-    console.error(error);
-    return null;
+    console.error("Login error:", error.message);
+    return false;
   }
 };
+
 
 export default function Login() {
 
@@ -51,10 +66,14 @@ export default function Login() {
      const tokenData = await login(name, passwd);
 
      if (tokenData) {
-       router.push("/user");
-     } else {
-       alert("Incorrect password or username");
-     }
+      // Confirmamos que el token está bien guardado
+      const storedToken = localStorage.getItem("accessToken");
+      if (storedToken) {
+        router.push("/user");
+      } else {
+        alert("Error: No se pudo guardar el token");
+      }
+    }
    };
 
     return (

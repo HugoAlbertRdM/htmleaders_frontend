@@ -18,6 +18,7 @@ export default function Header() {
         <Link href="/aboutUs">About us</Link>
         <Link href="/faq">FAQ</Link>
         <Link href="/user">Welcome</Link>
+        <Link href="/newProduct">New Product</Link>
       </nav>
       <nav className={styles.rightnav}>
         <Link className={styles.register} href="./register">Register</Link>
