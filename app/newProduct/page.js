@@ -1,5 +1,6 @@
 // app/newProduct/page.js
 import NewProductForm from "./newProduct";
+import { Suspense } from 'react';
 
 export default function NewProductPage() {
   return (
