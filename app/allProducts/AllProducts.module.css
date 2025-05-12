@@ -1,18 +1,23 @@
 .productsContainer {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: row;
+  gap: 20px;
+  padding: 20px;
 }
 
+
 .productsGrid {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(200px, 1fr)); /* Ajusta dinámicamente el número de columnas */
-    gap: 20px; /* Espaciado entre productos */
-    padding: 20px;
-    width: 85%;
-    align-self: center;
-  }
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+  flex-grow: 1;
+  background-color: #f2f2f2;
+  padding: 20px;
+  border-radius: 8px;
+}
+
   
 .productItem {
     border: 1px solid #ddd;
@@ -37,6 +42,7 @@
   
 .filters {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       gap: 1rem;
@@ -57,14 +63,20 @@
 }
 
 /* Estilo para el select de categorías */
-.filters select {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
-    background-color: white;
-    cursor: pointer;
+.filters {
+  width: 250px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background-color: #f9f9f9;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 20px;
 }
+
 
 /* Estilo para el input de rango */
 .filters input[type="range"] {
@@ -76,4 +88,11 @@
 .filters span {
     font-size: 16px;
     font-weight: bold;
+}
+
+/* En tu AllProducts.module.css */
+.starsFilter {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 10px;
 }

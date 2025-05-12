@@ -12,6 +12,9 @@ const Products = () => {
   const [maxPrice, setMaxPrice] = useState(1000);
   const [priceLimit, setPriceLimit] = useState(1000);
   const [searchText, setSearchText] = useState("");
+  const [minRating, setMinRating] = useState(0);
+  const [auctionStatus, setAuctionStatus] = useState("all");
+
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -68,7 +71,7 @@ const Products = () => {
 
     const fetchFilteredProducts = async () => {
       try {
-        let url = `http://127.0.0.1:8000/api/auctions/?min=${minPrice}&max=${maxPrice}`;
+        let url = `http://127.0.0.1:8000/api/auctions/?min=${minPrice}&max=${maxPrice}&min_rating=${minRating}`;
 
         if (selectedCategory !== "all") {
           const category = categoriesDict.find(category => category.name === selectedCategory);
@@ -79,6 +82,10 @@ const Products = () => {
 
         if (searchText && searchText.length >= 3) {
           url += `&search=${searchText}`;
+        }
+
+        if (auctionStatus !== "all") {
+          url += `&status=${auctionStatus}`; 
         }
 
         const response = await fetch(url, {
@@ -97,7 +104,7 @@ const Products = () => {
     };
 
     fetchFilteredProducts();
-  }, [selectedCategory, minPrice, maxPrice, categoriesDict, searchText]);
+  }, [selectedCategory, minPrice, maxPrice, categoriesDict, searchText, minRating, auctionStatus]);
 
   const handleProductClick = (id) => {
     window.location.href = `productDetail/${id}`;
@@ -121,6 +128,13 @@ const Products = () => {
           ))}
         </select>
 
+        <span>Auction Status</span>
+        <select value={auctionStatus} onChange={(e) => setAuctionStatus(e.target.value)}>
+          <option value="all">All</option>
+          <option value="open">Open</option>
+          <option value="closed">Closed</option>
+        </select>
+
         <span>Price Range: ${minPrice} - ${maxPrice}</span>
         <div className={styles.priceRange}>
           <input
@@ -137,6 +151,25 @@ const Products = () => {
             value={maxPrice}
             onChange={(e) => setMaxPrice(Number(e.target.value))}
           />
+        </div>
+
+        <span>Minimum Rating</span>
+        <div className={styles.starsFilter}>
+          {[0, 1, 2, 3, 4, 5].map((star) => (
+            <span
+              key={star}
+              onClick={() => setMinRating(star)}
+              title={star === 0 ? "Show all" : `${star} stars or more`}
+              style={{
+                cursor: 'pointer',
+                color: star === 0 || star <= minRating ? 'gold' : '#ccc',
+                fontSize: '20px',
+                marginRight: '4px',
+              }}
+            >
+              {star === 0 ? '✪' : '★'}
+            </span>
+          ))}
         </div>
       </div>
 

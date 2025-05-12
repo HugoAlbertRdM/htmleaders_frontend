@@ -8,6 +8,8 @@ export default function UserData() {
   const [userData, setUserData] = useState(null);
   const [auctions, setAuctions] = useState([]);
   const [bids, setBids] = useState([]);
+  const [comments, setComments] = useState([]);
+  const [ratings, setRatings] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -97,9 +99,65 @@ export default function UserData() {
       }
     };
 
+    const fetchUserComments = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) return;
+
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:8000/api/users/my-comments/", // Endpoint para comments
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Unable to fetch comments");
+        }
+
+        const comments = await response.json();
+        setComments(comments);
+      } catch (error) {
+        console.error("Error fetching comments:", error);
+      }
+    };
+
+    const fetchUserRatings = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!token) return;
+
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:8000/api/users/my-ratings/", // Endpoint para ratings
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Unable to fetch ratings");
+        }
+
+        const ratings = await response.json();
+        setRatings(ratings);
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      }
+    };
+
     fetchUserData();
     fetchUserAuctions();
     fetchUserBids();
+    fetchUserComments();
+    fetchUserRatings();
   }, [router]);
 
   const logoutUser = async () => {
@@ -143,7 +201,7 @@ export default function UserData() {
             <ul>
               {bids.map((bid, index) => (
                 <li key={index}>
-                  <strong>Bid:</strong> {bid.auction.title} | <strong>Price:</strong> ${bid.price} | <strong>Date:</strong> {new Date(bid.creation_date).toLocaleString()}
+                  <strong>{bid.auction_title}</strong> | ${bid.price} | {new Date(bid.creation_date).toLocaleString()}
                 </li>
               ))}
             </ul>
@@ -158,12 +216,42 @@ export default function UserData() {
             <ul>
               {auctions.map((auction, index) => (
                 <li key={index}>
-                  <strong>{auction.title}</strong> - ${auction.price}
+                  <strong>{auction.title}</strong> | ${auction.price}
                 </li>
               ))}
             </ul>
           ) : (
             <p>You have no products.</p>
+          )}
+        </div>
+
+        <div className={styles.section}>
+          <h2>My Comments</h2>
+          {comments.length > 0 ? (
+            <ul>
+              {comments.map((comment, index) => (
+                <li key={index}>
+                  <strong>{comment.auction_title}</strong> | {comment.title} | <i>{comment.text}</i>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>You have no comments.</p>
+          )}
+        </div>
+
+        <div className={styles.section}>
+          <h2>My Ratings</h2>
+          {ratings.length > 0 ? (
+            <ul>
+              {ratings.map((rating, index) => (
+                <li key={index}>
+                  <strong>{rating.auction_title}</strong> | {rating.rating}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>You have no ratings.</p>
           )}
         </div>
 

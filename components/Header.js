@@ -15,10 +15,10 @@ export default function Header() {
       </nav>
       <nav className={styles.centernav}>
         <Link href="/allProducts">All products</Link>
+        <Link href="/newProduct">New Product</Link>
         <Link href="/aboutUs">About us</Link>
         <Link href="/faq">FAQ</Link>
-        <Link href="/user">Welcome</Link>
-        <Link href="/newProduct">New Product</Link>
+        <Link href="/user">My profile</Link>
       </nav>
       <nav className={styles.rightnav}>
         <Link className={styles.register} href="/register">Register</Link>

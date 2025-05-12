@@ -482,6 +482,7 @@ const handleDeleteComment = (commentId) => {
               {editBid ? "Update Bid" : "Place Bid"}
             </button>
 
+            <h3>Comments</h3>
             {editComment && (
             <form onSubmit={handleUpdateComment} className={styles.commentForm}>
               <input
@@ -536,9 +537,11 @@ const handleDeleteComment = (commentId) => {
 
           </div>
 
-          <Link href={`/newProduct?id=${id}`}>
-                  <input className={styles.bidButton} type="button" value="Edit Product" />
-          </Link>
+          {userData?.username === product?.auctioneer && (
+            <Link href={`/newProduct?id=${id}`}>
+              <button className={styles.bidButton} >Edit Product</button>
+            </Link>
+          )}
           </div>
         </div>
       )}
