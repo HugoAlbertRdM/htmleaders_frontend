@@ -12,7 +12,7 @@ export default function Home() {
       try {
         const token = localStorage.getItem("accessToken");
 
-        const respuesta = await fetch("https://htmleaders-backend.onrender.com/api/auctions/", {
+        const respuesta = await fetch("http://127.0.0.1:8000/api/auctions/", {
           headers: {
             "Content-Type": "application/json",
           },

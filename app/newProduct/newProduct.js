@@ -11,7 +11,7 @@ export default function NewProduct() {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [price, setPrice] = useState("")
-  const [rating, setRating] = useState("")
+
   const [stock, setStock] = useState("")
   const [brand, setBrand] = useState("")
   const [categoriesDict, setCategoriesDict] = useState([]);
@@ -37,7 +37,7 @@ export default function NewProduct() {
     try {
       const token = localStorage.getItem("accessToken");
   
-      const response = await fetch("https://htmleaders-backend.onrender.com/api/auctions/categories/", {
+      const response = await fetch("http://127.0.0.1:8000/api/auctions/categories/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +71,7 @@ export default function NewProduct() {
   const handleProduct = async (event) => {
     event.preventDefault();
   
-    if (!title || !description || !price || !rating || !stock || !brand || !selectedCategory || !thumbnail || !closingDate) {
+    if (!title || !description || !price || !stock || !brand || !selectedCategory || !thumbnail || !closingDate) {
       setErrorMessage("All fields are required");
       return;
     }
@@ -89,7 +89,6 @@ export default function NewProduct() {
       title,
       description,
       price: parseFloat(price),
-      rating: parseFloat(rating),
       stock: parseInt(stock, 10),
       brand,
       category: categoryId,  // El ID de la categoría seleccionada
@@ -101,7 +100,7 @@ export default function NewProduct() {
     try {
       const token = localStorage.getItem("accessToken");
   
-      const response = await fetch(`https://htmleaders-backend.onrender.com/api/auctions/${id ? `${id}/` : ""}`, {
+      const response = await fetch(`http://127.0.0.1:8000/api/auctions/${id ? `${id}/` : ""}`, {
         method: id ? "PUT" : "POST",
         headers: {
           "Content-Type": "application/json",
@@ -137,7 +136,7 @@ export default function NewProduct() {
       try {
         const token = localStorage.getItem("accessToken");
     
-        const response = await fetch(`https://htmleaders-backend.onrender.com/api/auctions/${id}/`, {
+        const response = await fetch(`http://127.0.0.1:8000/api/auctions/${id}/`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -150,7 +149,6 @@ export default function NewProduct() {
         setTitle(product.title);
         setDescription(product.description);
         setPrice(product.price);
-        setRating(product.rating);
         setStock(product.stock);
         setBrand(product.brand);
         setSelectedCategory(product.category);
@@ -168,7 +166,7 @@ export default function NewProduct() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("https://htmleaders-backend.onrender.com/api/auctions/categories/", {
+        const response = await fetch("http://127.0.0.1:8000/api/auctions/categories/", {
           headers: {
             "Content-Type": "application/json",
           },
@@ -199,7 +197,7 @@ export default function NewProduct() {
 
       try {
         const response = await fetch(
-          "https://htmleaders-backend.onrender.com/api/users/profile/",
+          "http://127.0.0.1:8000/api/users/profile/",
           {
             method: "GET",
             headers: {
@@ -251,10 +249,7 @@ export default function NewProduct() {
             
             <label htmlFor="stock">Stock: </label>
             <input type="number" id="stock" name="stock" min="0" onChange={(e) => setStock(e.target.value)} required />
-            
-            <label htmlFor="rating">Rating: </label>
-            <input type="number" id="rating" name="rating" min="0" max="5" step="0.1" onChange={(e) => setRating(e.target.value)} required />
-            
+
             <label htmlFor="category">Category</label>
             <select
             onChange={(e) => {

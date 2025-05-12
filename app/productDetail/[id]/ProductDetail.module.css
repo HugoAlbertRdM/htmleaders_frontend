@@ -141,4 +141,90 @@
     color: rgb(60, 56, 72);
     transform: scale(1.05);
   }
+
+
+
+  .commentSection {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  max-width: 800px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.commentForm {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.commentForm input,
+.commentForm textarea {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 16px;
+}
+
+.commentForm button {
+  padding: 10px 20px;
+  background-color: rgb(60, 56, 72);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+.commentForm button:hover {
+  background-color: white;
+  color: rgb(60, 56, 72);
+  transform: scale(1.05);
+}
+
+.commentItem {
+  background-color: #f9f9f9;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+.commentItem h4 {
+  margin: 0 0 5px 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.commentItem p {
+  margin: 0 0 8px 0;
+  color: #555;
+}
+
+.commentItem small {
+  display: block;
+  color: #999;
+  margin-bottom: 10px;
+}
+
+.commentActions {
+  display: flex;
+  gap: 10px;
+}
+
+.commentActions button {
+  padding: 8px 14px;
+  font-size: 14px;
+  background-color: #e0e0e0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.commentActions button:hover {
+  background-color: #ccc;
+}
   
