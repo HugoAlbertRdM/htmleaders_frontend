@@ -24,7 +24,7 @@ export default function WalletPage() {
     }
 
     // Intentar obtener el saldo
-    fetch("http://127.0.0.1:8000/api/auctions/wallet/balance/", {
+    fetch("https://htmleaders-backend-16ex.onrender.com/api/auctions/wallet/balance/", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
@@ -58,18 +58,18 @@ export default function WalletPage() {
     // Validaciones cliente
     const cardRegex = /^\d{13,19}$/;
     if (!cardRegex.test(cardNumber)) {
-      setError("El número de tarjeta debe tener solo dígitos (13–19 caracteres).");
+      setError("The card must only have numbers (13–19).");
       return;
     }
     const amt = parseFloat(amount);
     if (isNaN(amt) || amt < 10) {
-      setError("La cantidad debe ser un número válido y al menos 10€.");
+      setError("The quantity must be a valid number and more than 10€");
       return;
     }
 
     try {
       const res = await fetch(
-        `http://127.0.0.1:8000/api/auctions/wallet/${action}/`,
+        `https://htmleaders-backend-16ex.onrender.com/api/auctions/wallet/${action}/`,
         {
           method: "POST",
           headers: {
@@ -90,8 +90,8 @@ export default function WalletPage() {
         setBalance(data.balance);
         setMessage(
           action === "topup"
-            ? `Ingreso exitoso. Tu nuevo saldo es ${data.balance}€`
-            : `Retirada exitosa. Tu nuevo saldo es ${data.balance}€`
+            ? `Success deposit. Your new salary is ${data.balance}€`
+            : `Success withdraw. Your new salary is ${data.balance}€`
         );
         setAmount("");
       }
@@ -106,13 +106,13 @@ export default function WalletPage() {
     setError(null);
 
     if (!cardNumber) {
-      setError("El número de tarjeta es obligatorio.");
+      setError("Card number is obligatory");
       return;
     }
 
     // Crear la cartera para el usuario
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/auctions/wallet/balance/", {
+      const res = await fetch("https://htmleaders-backend-16ex.onrender.com/api/auctions/wallet/balance/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -218,7 +218,7 @@ export default function WalletPage() {
           />
 
           <button type="submit" className={styles.submitButton}>
-            {action === "topup" ? "Ingresar dinero" : "Retirar dinero"}
+            {action === "topup" ? "Deposit money" : "Withdraw money"}
           </button>
         </form>
 

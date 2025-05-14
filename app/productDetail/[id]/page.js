@@ -44,7 +44,7 @@ const ProductDetail = ({ params }) => {
 
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/users/profile/",
+          "https://htmleaders-backend-16ex.onrender.com/api/users/profile/",
           {
             method: "GET",
             headers: {
@@ -73,7 +73,7 @@ const ProductDetail = ({ params }) => {
 
 
 useEffect(() => {
-  fetch(`http://127.0.0.1:8000/api/auctions/${id}/comments/`)
+  fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/comments/`)
     .then(response => response.json())
     .then(data => {
       console.log("Datos recibidos:", data); // Verificar lo que recibes
@@ -88,7 +88,7 @@ useEffect(() => {
   useEffect(() => {
     console.log('Product ID:', id); // Verifica si el id llega correctamente
     if (id) {
-      fetch(`http://127.0.0.1:8000/api/auctions/${id}/`)
+      fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/`)
         .then((response) => {
           if (!response.ok) {
             throw new Error('Network response was not ok');
@@ -111,7 +111,7 @@ useEffect(() => {
   }, [id]);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:8000/api/auctions/categories/")
+    fetch("https://htmleaders-backend-16ex.onrender.com/api/auctions/categories/")
       .then(response => response.json())
       .then(data => {
         const categoriesDict = data.results;
@@ -121,7 +121,7 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/api/auctions/${id}/bid/`)
+    fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/bid/`)
       .then(response => response.json())
       .then(data => {
         const bids = data.results;
@@ -131,7 +131,7 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
-    fetch(`http://127.0.0.1:8000/api/auctions/${id}/rating/`)
+    fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/rating/`)
       .then(response => response.json())
       .then(data => {
         const ratings = data.results;
@@ -146,7 +146,7 @@ useEffect(() => {
   const handleBid = () => {
     const token = localStorage.getItem("accessToken");
     if (bidAmount && !isNaN(bidAmount)) {
-      fetch(`http://127.0.0.1:8000/api/auctions/${id}/bid/`, {
+      fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/bid/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -179,7 +179,7 @@ useEffect(() => {
     const token = localStorage.getItem("accessToken");
     if (editBid && bidAmount && !isNaN(bidAmount)) {
       console.log("Updating bid:", editBid.id, bidAmount); // Verificación en consola
-      fetch(`http://127.0.0.1:8000/api/auctions/${id}/bid/${editBid.id}/`, {
+      fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/bid/${editBid.id}/`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -203,7 +203,7 @@ useEffect(() => {
   // Función para eliminar una puja
   const handleDeleteBid = (bidId) => {
     const token = localStorage.getItem("accessToken");
-    fetch(`http://127.0.0.1:8000/api/auctions/${id}/bid/${bidId}/`, {
+    fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/bid/${bidId}/`, {
       method: 'DELETE',
       Authorization: `Bearer ${token}`,
     })
@@ -216,7 +216,7 @@ useEffect(() => {
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
     const token = localStorage.getItem("accessToken");
-    const response = await fetch(`http://127.0.0.1:8000/api/auctions/${id}/comments/`, {
+    const response = await fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/comments/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -249,7 +249,7 @@ const handleUpdateComment = (e) => {
     console.log("Updating comment:", editComment.id, editedTitle, editedText); // Verificación en consola
 
     // Realiza la solicitud para actualizar el comentario
-    fetch(`http://127.0.0.1:8000/api/auctions/${id}/comments/${editComment.id}/`, {
+    fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/comments/${editComment.id}/`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -281,7 +281,7 @@ const handleUpdateComment = (e) => {
 const handleDeleteComment = (commentId) => {
   const token = localStorage.getItem("accessToken");
   
-  fetch(`http://127.0.0.1:8000/api/auctions/${id}/comments/${commentId}/`, {
+  fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/comments/${commentId}/`, {
     method: 'DELETE',
     headers: {
       'Authorization': `Bearer ${token}`,
@@ -300,7 +300,7 @@ const handleDeleteComment = (commentId) => {
   const handleRating = () => {
     const token = localStorage.getItem("accessToken");
     if (ratingAmount && !isNaN(ratingAmount)) {
-      fetch(`http://127.0.0.1:8000/api/auctions/${id}/rating/`, {
+      fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/rating/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -334,7 +334,7 @@ const handleDeleteComment = (commentId) => {
       const token = localStorage.getItem("accessToken");
       if (editRating && ratingAmount && !isNaN(ratingAmount)) {
         console.log("Updating rating:", editRating.id, ratingAmount); // Verificación en consola
-        fetch(`http://127.0.0.1:8000/api/auctions/${id}/rating/${editRating.id}/`, {
+        fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/rating/${editRating.id}/`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -359,7 +359,7 @@ const handleDeleteComment = (commentId) => {
   // Función para eliminar una calificación
   const handleDeleteRating = (ratingId) => {
     const token = localStorage.getItem("accessToken");
-    fetch(`http://127.0.0.1:8000/api/auctions/${id}/rating/${ratingId}/`, {
+    fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/rating/${ratingId}/`, {
       method: 'DELETE',
       headers: {
         Authorization: `Bearer ${token}`,

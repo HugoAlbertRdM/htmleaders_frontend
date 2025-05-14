@@ -12,7 +12,7 @@
    try {
  
      console.log("Datos enviados:", JSON.stringify(formData));
-     const response = await fetch("http://127.0.0.1:8000/api/users/register/", {
+     const response = await fetch("https://htmleaders-backend-16ex.onrender.com/api/users/register/", {
        method: "POST",
        headers: { "Content-Type": "application/json" },
        body: JSON.stringify(formData),

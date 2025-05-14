@@ -22,7 +22,7 @@ export default function UserData() {
 
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/users/profile/",
+          "https://htmleaders-backend-16ex.onrender.com/api/users/profile/",
           {
             method: "GET",
             headers: {
@@ -51,7 +51,7 @@ export default function UserData() {
 
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/users/my-auctions/", // Endpoint para subastas
+          "https://htmleaders-backend-16ex.onrender.com/api/users/my-auctions/", // Endpoint para subastas
           {
             method: "GET",
             headers: {
@@ -78,7 +78,7 @@ export default function UserData() {
 
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/users/my-bids/", // Endpoint para pujas
+          "https://htmleaders-backend-16ex.onrender.com/api/users/my-bids/", // Endpoint para pujas
           {
             method: "GET",
             headers: {
@@ -105,7 +105,7 @@ export default function UserData() {
 
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/users/my-comments/", // Endpoint para comments
+          "https://htmleaders-backend-16ex.onrender.com/api/users/my-comments/", // Endpoint para comments
           {
             method: "GET",
             headers: {
@@ -132,7 +132,7 @@ export default function UserData() {
 
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/users/my-ratings/", // Endpoint para ratings
+          "https://htmleaders-backend-16ex.onrender.com/api/users/my-ratings/", // Endpoint para ratings
           {
             method: "GET",
             headers: {
@@ -164,7 +164,7 @@ export default function UserData() {
     const token = localStorage.getItem("accessToken");
     const refresh = localStorage.getItem("refreshToken");
 
-    const response = await fetch("http://127.0.0.1:8000/api/users/log-out/", {
+    const response = await fetch("https://htmleaders-backend-16ex.onrender.com/api/users/log-out/", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
       body: JSON.stringify({ refresh }),

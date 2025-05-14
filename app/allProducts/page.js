@@ -19,20 +19,20 @@ const Products = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/auctions/categories/", {
+        const response = await fetch("https://htmleaders-backend-16ex.onrender.com/api/auctions/categories/", {
           headers: {
             "Content-Type": "application/json",
           },
         });
 
-        if (!response.ok) throw new Error("Error al obtener las categorías");
+        if (!response.ok) throw new Error("Error obstaining categories");
 
         const data = await response.json();
         const categoriesDict = data.results;
         setCategoriesDict(categoriesDict);
         setStrCategories(["all", ...new Set(categoriesDict.map(c => c.name))]);
       } catch (error) {
-        console.error("Error al obtener los datos de las categorías:", error);
+        console.error("Error obtaining data from categories:", error);
       }
     };
 
@@ -42,13 +42,13 @@ const Products = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/auctions/", {
+        const response = await fetch("https://htmleaders-backend-16ex.onrender.com/api/auctions/", {
           headers: {
             "Content-Type": "application/json",
           },
         });
 
-        if (!response.ok) throw new Error("Error al obtener los productos");
+        if (!response.ok) throw new Error("Error obstaining products");
 
         const data = await response.json();
         setProducts(data.results);
@@ -59,7 +59,7 @@ const Products = () => {
           setMaxPrice(maxProductPrice);
         }
       } catch (error) {
-        console.error("Error al obtener los datos de los productos:", error);
+        console.error("Error obtaining data from products:", error);
       }
     };
 
@@ -71,7 +71,7 @@ const Products = () => {
 
     const fetchFilteredProducts = async () => {
       try {
-        let url = `http://127.0.0.1:8000/api/auctions/?min=${minPrice}&max=${maxPrice}&min_rating=${minRating}`;
+        let url = `https://htmleaders-backend-16ex.onrender.com/api/auctions/?min=${minPrice}&max=${maxPrice}&min_rating=${minRating}`;
 
         if (selectedCategory !== "all") {
           const category = categoriesDict.find(category => category.name === selectedCategory);

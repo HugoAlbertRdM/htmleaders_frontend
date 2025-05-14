@@ -37,7 +37,7 @@ export default function NewProduct() {
     try {
       const token = localStorage.getItem("accessToken");
   
-      const response = await fetch("http://127.0.0.1:8000/api/auctions/categories/", {
+      const response = await fetch("https://htmleaders-backend-16ex.onrender.com/api/auctions/categories/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -112,7 +112,7 @@ export default function NewProduct() {
     try {
       const token = localStorage.getItem("accessToken");
   
-      const response = await fetch(`http://127.0.0.1:8000/api/auctions/${id ? `${id}/` : ""}`, {
+      const response = await fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id ? `${id}/` : ""}`, {
         method: id ? "PUT" : "POST",
         headers: {
           // "Content-Type": "application/json",
@@ -149,7 +149,7 @@ export default function NewProduct() {
       try {
         const token = localStorage.getItem("accessToken");
     
-        const response = await fetch(`http://127.0.0.1:8000/api/auctions/${id}/`, {
+        const response = await fetch(`https://htmleaders-backend-16ex.onrender.com/api/auctions/${id}/`, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -179,7 +179,7 @@ export default function NewProduct() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/auctions/categories/", {
+        const response = await fetch("https://htmleaders-backend-16ex.onrender.com/api/auctions/categories/", {
           headers: {
             "Content-Type": "application/json",
           },
@@ -210,7 +210,7 @@ export default function NewProduct() {
 
       try {
         const response = await fetch(
-          "http://127.0.0.1:8000/api/users/profile/",
+          "https://htmleaders-backend-16ex.onrender.com/api/users/profile/",
           {
             method: "GET",
             headers: {
