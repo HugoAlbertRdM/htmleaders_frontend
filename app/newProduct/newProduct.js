@@ -61,6 +61,7 @@ export default function NewProduct() {
       ]);
       // Seleccionar la nueva categoría automáticamente después de crearla
       setSelectedCategory(data.name);
+      setCreatingCategory(false);
   
     } catch (error) {
       setErrorMessage("Error al crear la categoría: " + error.message);
@@ -85,17 +86,28 @@ export default function NewProduct() {
       categoryId = 1;  // O cualquier valor predeterminado de categoría
     }
   
-    const productData = {
-      title,
-      description,
-      price: parseFloat(price),
-      stock: parseInt(stock, 10),
-      brand,
-      category: categoryId,  // El ID de la categoría seleccionada
-      thumbnail,
-      closing_date: new Date(`${closingDate}T23:59:59`).toISOString(),
-      auctioneer: userData.id, // ID del usuario
-    };
+    // const productData = {
+    //   title,
+    //   description,
+    //   price: parseFloat(price),
+    //   stock: parseInt(stock, 10),
+    //   brand,
+    //   category: categoryId,  // El ID de la categoría seleccionada
+    //   thumbnail,
+    //   closing_date: new Date(`${closingDate}T23:59:59`).toISOString(),
+    //   auctioneer: userData.id, // ID del usuario
+    // };
+
+  const productData = new FormData();
+  productData.append("title", title);
+  productData.append("description", description);
+  productData.append("price", parseFloat(price));
+  productData.append("stock", parseInt(stock, 10));
+  productData.append("brand", brand);
+  productData.append("category", categoryId);
+  productData.append("closing_date", new Date(`${closingDate}T23:59:59`).toISOString());
+  productData.append("auctioneer", userData.id);
+  productData.append("thumbnail", thumbnail); 
   
     try {
       const token = localStorage.getItem("accessToken");
@@ -103,10 +115,11 @@ export default function NewProduct() {
       const response = await fetch(`http://127.0.0.1:8000/api/auctions/${id ? `${id}/` : ""}`, {
         method: id ? "PUT" : "POST",
         headers: {
-          "Content-Type": "application/json",
+          // "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify(productData),
+        // body: JSON.stringify(productData),
+        body: productData,
       });
   
       if (!response.ok) {
@@ -240,10 +253,12 @@ export default function NewProduct() {
             
             <label htmlFor="closingDate">Closing Date: </label>
             <input type="date" id="closingDate" name="closingDate" onChange={(e) => setClosingDate(e.target.value)} required />
-            
-            <label htmlFor="image">Image: </label>
-            <input type="url" id="image" name="image" onChange={(e) => setThumbnail(e.target.value)} required />
-            
+            <input
+              type="file"
+              id="thumbnail"
+              accept="image/*"
+              onChange={(e) => setThumbnail(e.target.files[0])}
+            />
             <label htmlFor="startingPrice">Starting Price: </label>
             <input type="number" id="startingPrice" name="startingPrice" min="0" step="1" onChange={(e) => setPrice(e.target.value)} required />
             
@@ -251,27 +266,28 @@ export default function NewProduct() {
             <input type="number" id="stock" name="stock" min="0" onChange={(e) => setStock(e.target.value)} required />
 
             <label htmlFor="category">Category</label>
-            <select
-            onChange={(e) => {
-              const value = e.target.value;
-              console.log('Selected value:', value); // Para verificar el valor seleccionado
-              if (value === "new") {
-                setCreatingCategory(true);
-                setSelectedCategory(""); // Limpiamos cualquier categoría seleccionada
-              } else {
-                setCreatingCategory(false);
-                setSelectedCategory(value); // Establecemos la categoría seleccionada
-              }
-            }}
-            value={creatingCategory ? "new" : selectedCategory} // Asegúrate de que este valor se actualice correctamente
-          >
-            {strCategories.map((category, index) => (
-              <option key={index} value={category}>
-                {category}
-              </option>
-            ))}
-            <option value="new">+ Create new category</option>
-          </select>
+
+          <select
+          onChange={(e) => {
+            const value = e.target.value;
+            if (value === "new") {
+              setCreatingCategory(true);
+              setSelectedCategory(""); // Limpiar selección actual
+            } else {
+              setCreatingCategory(false);
+              setSelectedCategory(value); // Guardar selección
+            }
+          }}
+          value={creatingCategory ? "new" : selectedCategory || ""}
+        >
+          <option value="" disabled>-- Select a category --</option>
+          {strCategories.map((category, index) => (
+            <option key={index} value={category}>
+              {category}
+            </option>
+          ))}
+          <option value="new">+ Create new category</option>
+        </select>
 
           {creatingCategory && (
             <div>

@@ -181,7 +181,7 @@ const Products = () => {
             onClick={() => handleProductClick(product.id)}
           >
             <img
-              src={product.thumbnail}
+              src={`${product.thumbnail}`} 
               alt={product.title}
               className={styles.productImage}
             />

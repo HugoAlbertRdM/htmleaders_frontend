@@ -537,7 +537,7 @@ const handleDeleteComment = (commentId) => {
 
           </div>
 
-          {userData?.username === product?.auctioneer && (
+          {userData?.id === product?.auctioneer && (
             <Link href={`/newProduct?id=${id}`}>
               <button className={styles.bidButton} >Edit Product</button>
             </Link>
